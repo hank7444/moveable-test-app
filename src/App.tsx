@@ -1,8 +1,8 @@
-import { deepFlat } from "@daybrush/utils";
-import * as React from "react";
-import Selecto, { ElementType } from "react-selecto";
-import Moveable, { MoveableTargetGroupsType } from "react-moveable";
-import { GroupManager, TargetList } from "@moveable/helper";
+import { deepFlat } from '@daybrush/utils';
+import * as React from 'react';
+import Selecto, { ElementType } from 'react-selecto';
+import Moveable, { MoveableTargetGroupsType } from 'react-moveable';
+import { GroupManager, TargetList } from '@moveable/helper';
 
 export default function App() {
   const groupManager = React.useMemo<GroupManager>(() => new GroupManager([]), []);
@@ -19,7 +19,7 @@ export default function App() {
     setTargets(nextTargetes);
   }, []);
 
-  const getGroups = (groupManager: GroupManager, elements: ElementType[]): (HTMLElement | SVGElement)[][]  => {
+  const getGroups = (groupManager: GroupManager, elements: ElementType[]): (HTMLElement | SVGElement)[][] => {
     const existGroupChilds = groupManager.toChilds(elements).filter(v => v.depth === 2);
     const groupsHash = new Map();
     const groups: (HTMLElement | SVGElement)[][] = [];
@@ -36,21 +36,23 @@ export default function App() {
     return groups;
   };
 
+  // Set default groups
   React.useEffect(() => {
-
-    setTimeout(() => {
-      const elements = selectoRef.current!.getSelectableElements();
-      groupManager.set([], elements);
-
-      groupManager.group([elements[0], elements[1]], true);
-      groupManager.group([elements[3], elements[4]], true);
-    }, 50);
+    const elements = selectoRef.current!.getSelectableElements();
+    groupManager.set([], elements);
+    groupManager.group([elements[0], elements[1]], true);
+    groupManager.group([elements[3], elements[4]], true);
   }, []);
 
 
-  return <div className="root">
-    <div className="container">
+  return <div className='root'>
+    <div className='container'>
       <button onClick={() => {
+        /*
+          Each time we add selectable items,
+          we need to update the new items in the groupManager and ensure
+          that the original group information remains intact.
+        */
         cubes.push(count.current++);
         setCubes([...cubes]);
 
@@ -98,11 +100,11 @@ export default function App() {
         ref={selectoRef}
         dragContainer={window}
         preventDefault
-        selectableTargets={[".selectable"]}
+        selectableTargets={['.selectable']}
         hitRate={0}
         selectByClick={true}
         selectFromInside={false}
-        toggleContinueSelect={["shift"]}
+        toggleContinueSelect={['shift']}
         ratio={0}
         onDragStart={e => {
           const moveable = moveableRef.current!;
@@ -110,7 +112,7 @@ export default function App() {
 
           // Must have use deep flat
           const flatted = deepFlat(targets);
-          if (target.tagName === "BUTTON"
+          if (target.tagName === 'BUTTON'
             || moveable.isMoveableElement(target)
             || flatted.some(t => t === target || t.contains(target))
           ) {
@@ -136,7 +138,7 @@ export default function App() {
             });
           }
           let nextChilds: TargetList;
-  
+
           if (isDragStartEnd) {
             nextChilds = groupManager.selectCompletedChilds(targets, added, removed);
           } else {
@@ -147,10 +149,10 @@ export default function App() {
           setSelectedTargets(nextChilds.targets());
         }}
       />
-      <div className="elements selecto-area">
-        {cubes.map(i => <div className="cube selectable" key={i}>{i}</div>)}
+      <div className='elements selecto-area'>
+        {cubes.map(i => <div className='cube selectable' key={i}>{i}</div>)}
       </div>
-      <div className="empty elements"></div>
+      <div className='empty elements'></div>
     </div>
   </div>;
 }
